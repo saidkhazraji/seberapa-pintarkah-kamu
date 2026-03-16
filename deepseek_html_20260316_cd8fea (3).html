@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seberapa Pintarkah Kamu? (Acak Soal)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #0a2f44, #021c2c);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 16px;
+        }
+        .game-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 60px 60px 40px 40px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 3px #f9d77e;
+            width: 100%;
+            max-width: 800px;
+        }
+        .card {
+            background: #fcf3e0;
+            border-radius: 50px 50px 30px 30px;
+            padding: 30px 20px;
+            box-shadow: inset 0 2px 8px #ffeac7, 0 10px 20px rgba(0,0,0,0.4);
+            border: 1px solid #f5b342;
+        }
+        h1 {
+            color: #1f3a57;
+            font-weight: 800;
+            font-size: 2.6rem;
+            margin: 0 0 10px;
+            text-align: center;
+            text-shadow: 4px 4px 0 #ffc107;
+            letter-spacing: 2px;
+            word-break: break-word;
+        }
+        h2 {
+            color: #1f3a57;
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin: 10px 0 20px;
+            text-align: center;
+            text-shadow: 2px 2px 0 #ffb300;
+        }
+        .button-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .btn {
+            background: #fedb86;
+            border: none;
+            color: #1f3a57;
+            font-weight: 700;
+            font-size: 1.2rem;
+            padding: 14px 22px;
+            border-radius: 60px;
+            box-shadow: 0 6px 0 #b2892c, 0 8px 16px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: 0.07s;
+            border: 1px solid #ffc107;
+            min-width: 120px;
+        }
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #b2892c;
+        }
+        .btn.small {
+            font-size: 1rem;
+            padding: 10px 16px;
+            min-width: 80px;
+        }
+        .btn.primary {
+            background: #2d5a9c;
+            color: white;
+            box-shadow: 0 6px 0 #1a2f4e;
+        }
+        .kelas-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .kelas-btn {
+            background: #c0dbfa;
+            border: 2px solid #24548f;
+            color: #09223b;
+            font-weight: 600;
+            font-size: 1.2rem;
+            padding: 12px 20px;
+            border-radius: 50px;
+            min-width: 90px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .kelas-btn:hover {
+            background: #ffe08a;
+            border-color: #b2892c;
+        }
+        .soal-header {
+            display: flex;
+            justify-content: space-between;
+            background: #e8d9c2;
+            padding: 12px 20px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            border: 2px solid #b68b5c;
+            font-weight: 600;
+        }
+        .soal-nomor {
+            background: #1f3a57;
+            color: #ffd966;
+            padding: 8px 22px;
+            border-radius: 40px;
+        }
+        .info-mapel {
+            background: #ffe4b5;
+            padding: 6px 16px;
+            border-radius: 30px;
+        }
+        .soal-pertanyaan {
+            background: #fffbf0;
+            border: 3px solid #ca9e5a;
+            border-radius: 40px;
+            padding: 28px 24px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f3a57;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: inset 0 0 0 2px #fbe9c3;
+        }
+        .pilihan-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .pilihan-item {
+            background: white;
+            border: 2px solid #a58e6d;
+            border-radius: 60px;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #8b764f;
+            transition: 0.1s;
+        }
+        .pilihan-item.selected {
+            background: #d4edc9;
+            border-color: #2e7d32;
+            box-shadow: 0 4px 0 #1b5e20;
+        }
+        .pilihan-item input[type="radio"] {
+            width: 22px;
+            height: 22px;
+            margin-right: 20px;
+            accent-color: #1f3a57;
+            pointer-events: none;
+        }
+        .pilihan-label {
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .hasil-box {
+            background: #ede3d2;
+            border-radius: 40px;
+            padding: 20px;
+            border: 4px solid #d4a951;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .nilai-angka {
+            font-size: 5rem;
+            font-weight: 800;
+            color: #1f3a57;
+            text-shadow: 4px 4px 0 #ffb300;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .review-soal {
+            margin: 30px 0 10px;
+        }
+        .review-item {
+            background: #ffebee;
+            border-left: 8px solid #d32f2f;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .review-pertanyaan {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        .review-jawaban {
+            background: #f5e6d3;
+            padding: 8px 12px;
+            border-radius: 30px;
+            margin-top: 6px;
+        }
+        .btn-restart {
+            display: block;
+            width: fit-content;
+            margin: 20px auto 0;
+        }
+        .footer {
+            text-align: center;
+            color: #ffdb9d;
+            margin-top: 16px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="card">
+        <h1>🤔 SEBERAPA PINTARKAH KAMU?</h1>
+
+        <!-- HALAMAN PILIH MAPEL (8 mapel) -->
+        <div id="pageMapel">
+            <h2>📚 Pilih Mata Pelajaran</h2>
+            <div class="button-grid">
+                <button class="btn mapel-btn" data-mapel="matematika">🧮 Matematika</button>
+                <button class="btn mapel-btn" data-mapel="ips">🌏 IPS</button>
+                <button class="btn mapel-btn" data-mapel="ipa">🔬 IPA</button>
+                <button class="btn mapel-btn" data-mapel="seni">🎨 Seni Rupa</button>
+                <button class="btn mapel-btn" data-mapel="pkn">📜 Pancasila</button>
+                <button class="btn mapel-btn" data-mapel="bindo">🇮🇩 B. Indonesia</button>
+                <button class="btn mapel-btn" data-mapel="binggris">🇬🇧 B. Inggris</button>
+                <button class="btn mapel-btn" data-mapel="sejarah">🏛️ Sejarah</button>
+            </div>
+        </div>
+
+        <!-- HALAMAN TINGKAT -->
+        <div id="pageTingkat" style="display: none;">
+            <h2>🏫 Pilih Tingkat</h2>
+            <div class="button-grid">
+                <button class="btn tingkat-btn" data-tingkat="tk">TK</button>
+                <button class="btn tingkat-btn" data-tingkat="sd">SD</button>
+                <button class="btn tingkat-btn" data-tingkat="smp">SMP</button>
+                <button class="btn tingkat-btn" data-tingkat="sma">SMA</button>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn small" id="backToMapel">⬅ Kembali</button>
+            </div>
+        </div>
+
+        <!-- HALAMAN KELAS -->
+        <div id="pageKelas" style="display: none;">
+            <h2 id="kelasTitle">📌 Pilih Kelas</h2>
+            <div id="kelasButtons" class="kelas-container"></div>
+            <div style="text-align: center;">
+                <button class="btn small" id="backToTingkat">⬅ Kembali</button>
+            </div>
+        </div>
+
+        <!-- HALAMAN SOAL -->
+        <div id="pageSoal" style="display: none;">
+            <div class="soal-header">
+                <span class="soal-nomor" id="soalCounter">1/10</span>
+                <span class="info-mapel" id="infoMapelTingkat"></span>
+            </div>
+            <div id="soalPertanyaan" class="soal-pertanyaan">Memuat soal...</div>
+            <div id="pilihanContainer" class="pilihan-container"></div>
+            <div class="nav-buttons">
+                <button class="btn small" id="prevSoal" disabled>◀ Sebelumnya</button>
+                <button class="btn small" id="nextSoal">Selanjutnya ▶</button>
+                <button class="btn small primary" id="submitSoal" style="display: none;">✅ Selesai</button>
+            </div>
+        </div>
+
+        <!-- HALAMAN HASIL + REVIEW -->
+        <div id="pageHasil" style="display: none;">
+            <div class="hasil-box">
+                <h2>🎉 Skor Akhir</h2>
+                <div class="nilai-angka" id="nilaiAkhir">0</div>
+                <div class="review-soal" id="reviewContainer"></div>
+                <button class="btn primary btn-restart" id="restartGame">🔄 Coba Lagi</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer">✨ 10 soal berbeda setiap main | review soal salah</div>
+</div>
+
+<script>
+(function() {
+    // ================= STATE =================
+    let mapel = '', tingkat = '', kelas = '';
+    let soalList = [];                // array {pertanyaan, pilihan, jawaban}
+    let jawabanUser = new Array(10).fill(null);
+    let indeks = 0;
+
+    // ================= ELEMEN =================
+    const pageMapel = document.getElementById('pageMapel');
+    const pageTingkat = document.getElementById('pageTingkat');
+    const pageKelas = document.getElementById('pageKelas');
+    const pageSoal = document.getElementById('pageSoal');
+    const pageHasil = document.getElementById('pageHasil');
+
+    const mapelBtns = document.querySelectorAll('.mapel-btn');
+    const tingkatBtns = document.querySelectorAll('.tingkat-btn');
+    const backToMapel = document.getElementById('backToMapel');
+    const backToTingkat = document.getElementById('backToTingkat');
+    const kelasTitle = document.getElementById('kelasTitle');
+    const kelasButtonsDiv = document.getElementById('kelasButtons');
+    const soalCounter = document.getElementById('soalCounter');
+    const infoMapelTingkat = document.getElementById('infoMapelTingkat');
+    const soalPertanyaan = document.getElementById('soalPertanyaan');
+    const pilihanContainer = document.getElementById('pilihanContainer');
+    const prevSoal = document.getElementById('prevSoal');
+    const nextSoal = document.getElementById('nextSoal');
+    const submitSoal = document.getElementById('submitSoal');
+    const restartBtn = document.getElementById('restartGame');
+    const nilaiAkhir = document.getElementById('nilaiAkhir');
+    const reviewContainer = document.getElementById('reviewContainer');
+
+    // ============ FUNGSI MENDAPATKAN BANK SOAL BERDASARKAN KOMBINASI ============
+    function getBankSoal() {
+        const m = mapel;
+        const t = tingkat;
+        const k = kelas;
+
+        // ============ MATEMATIKA ============
+        if (m === 'matematika') {
+            if (t === 'tk') {
+                return [
+                    { q: "Berapa 2 + 2?", p: ["4", "3", "5", "2"], j:0 },
+                    { q: "Berapa 3 + 1?", p: ["4", "5", "2", "3"], j:0 },
+                    { q: "Berapa 5 - 2?", p: ["3", "2", "4", "1"], j:0 },
+                    { q: "Berapa 4 - 1?", p: ["3", "4", "2", "5"], j:0 },
+                    { q: "Hitung 1 + 3?", p: ["4", "5", "3", "2"], j:0 },
+                    { q: "Hitung 2 + 3?", p: ["5", "4", "6", "3"], j:0 },
+                    { q: "Berapa 3 - 1?", p: ["2", "3", "4", "1"], j:0 },
+                    { q: "Berapa 4 + 1?", p: ["5", "6", "4", "3"], j:0 },
+                    { q: "Berapa 5 - 3?", p: ["2", "3", "1", "4"], j:0 },
+                    { q: "Berapa 2 + 1?", p: ["3", "4", "2", "5"], j:0 }
+                ];
+            } else if (t === 'sd') {
+                if (k === '1' || k === '2') {
+                    return [
+                        { q: "12 + 7 = ...", p: ["19", "18", "20", "17"], j:0 },
+                        { q: "15 - 8 = ...", p: ["7", "6", "8", "9"], j:0 },
+                        { q: "9 + 6 = ...", p: ["15", "14", "16", "13"], j:0 },
+                        { q: "14 - 5 = ...", p: ["9", "8", "10", "7"], j:0 },
+                        { q: "11 + 9 = ...", p: ["20", "19", "21", "18"], j:0 },
+                        { q: "13 - 7 = ...", p: ["6", "5", "7", "8"], j:0 },
+                        { q: "8 + 8 = ...", p: ["16", "15", "17", "14"], j:0 },
+                        { q: "18 - 9 = ...", p: ["9", "8", "10", "7"], j:0 },
+                        { q: "7 + 6 = ...", p: ["13", "12", "14", "11"], j:0 },
+                        { q: "16 - 8 = ...", p: ["8", "7", "9", "6"], j:0 }
+                    ];
+                } else if (k === '3' || k === '4') {
+                    return [
+                        { q: "6 × 7 = ...", p: ["42", "48", "36", "49"], j:0 },
+                        { q: "56 ÷ 8 = ...", p: ["7", "6", "8", "9"], j:0 },
+                        { q: "9 × 5 = ...", p: ["45", "40", "50", "35"], j:0 },
+                        { q: "72 ÷ 9 = ...", p: ["8", "7", "9", "6"], j:0 },
+                        { q: "4 × 8 = ...", p: ["32", "36", "28", "40"], j:0 },
+                        { q: "48 ÷ 6 = ...", p: ["8", "7", "9", "6"], j:0 },
+                        { q: "7 × 9 = ...", p: ["63", "56", "64", "72"], j:0 },
+                        { q: "81 ÷ 9 = ...", p: ["9", "8", "7", "10"], j:0 },
+                        { q: "5 × 8 = ...", p: ["40", "35", "45", "30"], j:0 },
+                        { q: "36 ÷ 4 = ...", p: ["9", "8", "7", "6"], j:0 }
+                    ];
+                } else {
+                    return [
+                        { q: "Luas persegi panjang 12 cm x 5 cm?", p: ["60 cm²", "50 cm²", "70 cm²", "65 cm²"], j:0 },
+                        { q: "15² = ...", p: ["225", "125", "250", "200"], j:0 },
+                        { q: "Akar kuadrat 144?", p: ["12", "14", "16", "18"], j:0 },
+                        { q: "Kecepatan 50 km/jam, waktu 3 jam, jarak?", p: ["150 km", "100 km", "200 km", "120 km"], j:0 },
+                        { q: "Hasil dari 2/3 + 1/3?", p: ["1", "2/3", "3/6", "4/3"], j:0 },
+                        { q: "25% dari 200?", p: ["50", "40", "60", "25"], j:0 },
+                        { q: "Faktor dari 24?", p: ["1,2,3,4,6,8,12,24", "1,3,5,8,24", "2,4,6,12", "1,2,4,8,12,24"], j:0 },
+                        { q: "KPK dari 6 dan 8?", p: ["24", "48", "16", "32"], j:0 },
+                        { q: "FPB dari 18 dan 24?", p: ["6", "3", "9", "12"], j:0 },
+                        { q: "Volume kubus rusuk 5 cm?", p: ["125 cm³", "25 cm³", "100 cm³", "150 cm³"], j:0 }
+                    ];
+                }
+            } else if (t === 'smp') {
+                return [
+                    { q: "Hasil dari (x+3)(x-2) = ...", p: ["x²+x-6", "x²+5x-6", "x²-x+6", "x²-5x-6"], j:0 },
+                    { q: "Nilai x dari 2x - 5 = 7?", p: ["6", "5", "4", "7"], j:0 },
+                    { q: "Himpunan penyelesaian x² - 5x + 6 = 0?", p: ["{2,3}", "{1,6}", "{3,2}", "{-2,-3}"], j:0 },
+                    { q: "Gradien garis y = 3x - 2?", p: ["3", "-2", "2", "-3"], j:0 },
+                    { q: "Luas lingkaran jari-jari 7 cm?", p: ["154 cm²", "144 cm²", "148 cm²", "150 cm²"], j:0 },
+                    { q: "Volume tabung r=7, t=10?", p: ["1540 cm³", "1500 cm³", "1400 cm³", "1600 cm³"], j:0 },
+                    { q: "√225 + √100 = ...", p: ["25", "15", "20", "35"], j:0 },
+                    { q: "3⁴ = ...", p: ["81", "64", "27", "243"], j:0 },
+                    { q: "Bentuk sederhana 8/12?", p: ["2/3", "3/4", "4/6", "1/2"], j:0 },
+                    { q: "Rata-rata 6,7,8,9,10?", p: ["8", "7", "9", "10"], j:0 }
+                ];
+            } else { // sma
+                return [
+                    { q: "Turunan dari f(x)=3x²+2x?", p: ["6x+2", "3x+2", "6x-2", "3x²+2"], j:0 },
+                    { q: "Integral dari 2x dx?", p: ["x² + C", "2x² + C", "x²", "x² + 2C"], j:0 },
+                    { q: "Nilai sin 30°?", p: ["1/2", "√3/2", "1/√2", "0"], j:0 },
+                    { q: "Matriks A berordo 2x3, B 3x2, hasil kali AB berordo?", p: ["2x2", "3x3", "2x3", "3x2"], j:0 },
+                    { q: "Limit x→2 (x²-4)/(x-2) = ...", p: ["4", "2", "0", "tak hingga"], j:0 },
+                    { q: "log 1000 = ...", p: ["3", "10", "100", "1"], j:0 },
+                    { q: "Nilai cos 60°?", p: ["1/2", "√3/2", "1", "0"], j:0 },
+                    { q: "Barisan aritmatika 2,5,8,... suku ke-10?", p: ["29", "30", "28", "27"], j:0 },
+                    { q: "Peluang muncul mata dadu genap?", p: ["1/2", "1/3", "2/3", "1/6"], j:0 },
+                    { q: "Koordinat titik puncak y=x²-4x+3?", p: ["(2,-1)", "(-2,1)", "(2,1)", "(-2,-1)"], j:0 }
+                ];
+            }
+        }
+
+        // ============ IPS ============
+        else if (m === 'ips') {
+            if (t === 'tk') {
+                return [
+                    { q: "Warna bendera Indonesia?", p: ["Merah & putih", "Biru & putih", "Hijau & kuning", "Hitam & putih"], j:0 },
+                    { q: "Hewan yang bisa terbang?", p: ["Burung", "Kucing", "Ikan", "Sapi"], j:0 },
+                    { q: "Buah berwarna merah?", p: ["Apel", "Jeruk", "Pisang", "Anggur"], j:0 },
+                    { q: "Kendaraan roda dua?", p: ["Sepeda motor", "Mobil", "Bus", "Kereta"], j:0 },
+                    { q: "Benda yang digunakan untuk makan?", p: ["Sendok", "Baju", "Buku", "Pensil"], j:0 },
+                    { q: "Hewan yang hidup di air?", p: ["Ikan", "Ayam", "Kambing", "Burung"], j:0 },
+                    { q: "Pekerjaan yang memadamkan api?", p: ["Pemadam kebakaran", "Polisi", "Dokter", "Guru"], j:0 },
+                    { q: "Alat untuk menulis?", p: ["Pensil", "Penggaris", "Gunting", "Lem"], j:0 },
+                    { q: "Rasa manis biasanya pada?", p: ["Gula", "Garam", "Cuka", "Lada"], j:0 },
+                    { q: "Bagian tubuh untuk melihat?", p: ["Mata", "Telinga", "Hidung", "Mulut"], j:0 }
+                ];
+            } else if (t === 'sd') {
+                if (k <= '3') {
+                    return [
+                        { q: "Ibu kota Indonesia?", p: ["Jakarta", "Bandung", "Surabaya", "Medan"], j:0 },
+                        { q: "Gunung tertinggi di Jawa?", p: ["Semeru", "Merapi", "Bromo", "Slamet"], j:0 },
+                        { q: "Pulau terbesar di Indonesia?", p: ["Kalimantan", "Sumatra", "Papua", "Sulawesi"], j:0 },
+                        { q: "Danau Toba terletak di?", p: ["Sumatera Utara", "Jawa Barat", "Sulawesi", "Papua"], j:0 },
+                        { q: "Laut yang memisahkan Jawa dan Kalimantan?", p: ["Laut Jawa", "Laut Cina Selatan", "Samudra Hindia", "Selat Sunda"], j:0 },
+                        { q: "Provinsi paling timur Indonesia?", p: ["Papua", "Maluku", "Sulawesi", "NTB"], j:0 },
+                        { q: "Suku Sunda berasal dari?", p: ["Jawa Barat", "Jawa Tengah", "Jawa Timur", "Banten"], j:0 },
+                        { q: "Makanan khas Padang?", p: ["Rendang", "Gudeg", "Sate", "Pempek"], j:0 },
+                        { q: "Tari Kecak berasal dari?", p: ["Bali", "Jawa", "Sumatra", "Sulawesi"], j:0 },
+                        { q: "Alat musik angklung dari?", p: ["Jawa Barat", "Jawa Tengah", "Jawa Timur", "Bali"], j:0 }
+                    ];
+                } else {
+                    return [
+                        { q: "Hasil tambang utama Kalimantan?", p: ["Batu bara", "Minyak", "Emas", "Timah"], j:0 },
+                        { q: "Selat antara Jawa dan Sumatra?", p: ["Sunda", "Malaka", "Bali", "Lombok"], j:0 },
+                        { q: "Suku mayoritas di Bali?", p: ["Hindu", "Muslim", "Kristen", "Buddha"], j:0 },
+                        { q: "Tarian tradisional dari Aceh?", p: ["Saman", "Piring", "Kecak", "Jaipong"], j:0 },
+                        { q: "Gunung Merapi terletak di perbatasan?", p: ["Jateng & DIY", "Jatim & Jateng", "Jabar & Jateng", "Jatim & DIY"], j:0 },
+                        { q: "Pulau Seribu terletak di?", p: ["Jakarta", "Banten", "Jabar", "Lampung"], j:0 },
+                        { q: "Rumah adat Tongkonan dari?", p: ["Sulawesi Selatan", "Sulawesi Utara", "Sulawesi Tenggara", "Sulawesi Barat"], j:0 },
+                        { q: "Candi Borobudur terletak di?", p: ["Magelang", "Yogyakarta", "Solo", "Semarang"], j:0 },
+                        { q: "Bandar udara Soekarno-Hatta di?", p: ["Tangerang", "Jakarta", "Bekasi", "Depok"], j:0 },
+                        { q: "Hewan khas Papua?", p: ["Cenderawasih", "Komodo", "Anoa", "Harimau"], j:0 }
+                    ];
+                }
+            } else if (t === 'smp') {
+                return [
+                    { q: "Negara yang pernah menjajah Indonesia paling lama?", p: ["Belanda", "Portugis", "Inggris", "Jepang"], j:0 },
+                    { q: "Sungai terpanjang di dunia?", p: ["Nil", "Amazon", "Mississippi", "Yangtze"], j:0 },
+                    { q: "Benua terluas?", p: ["Asia", "Afrika", "Amerika", "Eropa"], j:0 },
+                    { q: "Samudra terluas?", p: ["Pasifik", "Atlantik", "Hindia", "Arktik"], j:0 },
+                    { q: "Negara dengan hutan hujan tropis terbesar?", p: ["Brasil", "Indonesia", "Kongo", "Peru"], j:0 },
+                    { q: "Gurun terluas di dunia?", p: ["Sahara", "Gobi", "Arab", "Kalahari"], j:0 },
+                    { q: "Selandia Baru terletak di benua?", p: ["Australia/Oceania", "Asia", "Amerika", "Eropa"], j:0 },
+                    { q: "Terusan Suez menghubungkan?", p: ["Laut Merah & Mediterania", "Atlantik & Pasifik", "India & Pasifik", "Merah & Arab"], j:0 },
+                    { q: "Negara yang dijuluki Negeri Tirai Bambu?", p: ["China", "Jepang", "Korea", "Vietnam"], j:0 },
+                    { q: "Ibukota Perancis?", p: ["Paris", "London", "Berlin", "Roma"], j:0 }
+                ];
+            } else { // sma
+                return [
+                    { q: "Uni Eropa berpusat di kota?", p: ["Brussels", "Paris", "London", "Berlin"], j:0 },
+                    { q: "PBB didirikan tahun?", p: ["1945", "1919", "1939", "1950"], j:0 },
+                    { q: "Mata uang resmi Jepang?", p: ["Yen", "Won", "Yuan", "Ringgit"], j:0 },
+                    { q: "Negara dengan populasi terbanyak?", p: ["China", "India", "AS", "Indonesia"], j:0 },
+                    { q: "Organisasi OPEC berpusat di?", p: ["Wina", "Jenewa", "New York", "London"], j:0 },
+                    { q: "AFTA adalah kerjasama ekonomi di kawasan?", p: ["Asia Tenggara", "Asia Timur", "Asia Selatan", "Pasifik"], j:0 },
+                    { q: "Pendiri ASEAN ditandatangani di?", p: ["Bangkok", "Jakarta", "Kuala Lumpur", "Singapura"], j:0 },
+                    { q: "Negara yang tidak memiliki laut?", p: ["Afghanistan", "Thailand", "Vietnam", "Malaysia"], j:0 },
+                    { q: "Benua terdingin?", p: ["Antartika", "Eropa", "Amerika Utara", "Asia"], j:0 },
+                    { q: "Gunung tertinggi di dunia?", p: ["Everest", "K2", "Kanchenjunga", "Lhotse"], j:0 }
+                ];
+            }
+        }
+
+        // ============ IPA ============
+        else if (m === 'ipa') {
+            if (t === 'tk') {
+                return [
+                    { q: "Hewan yang berkokok?", p: ["Ayam", "Bebek", "Kucing", "Anjing"], j:0 },
+                    { q: "Benda yang terang di malam hari?", p: ["Bulan", "Matahari", "Bintang", "Awan"], j:0 },
+                    { q: "Air jika dipanaskan menjadi?", p: ["Uap", "Es", "Padat", "Dingin"], j:0 },
+                    { q: "Daun berwarna?", p: ["Hijau", "Merah", "Biru", "Kuning"], j:0 },
+                    { q: "Hewan yang berkaki empat?", p: ["Kucing", "Ayam", "Burung", "Ikan"], j:0 },
+                    { q: "Buah yang berwarna kuning?", p: ["Pisang", "Apel", "Anggur", "Jeruk"], j:0 },
+                    { q: "Benda yang terapung di air?", p: ["Plastik", "Batu", "Logam", "Kaca"], j:0 },
+                    { q: "Hewan yang melompat?", p: ["Kelinci", "Sapi", "Kambing", "Kuda"], j:0 },
+                    { q: "Benda yang berbentuk bulat?", p: ["Bola", "Buku", "Pensil", "Meja"], j:0 },
+                    { q: "Hewan yang menyusui?", p: ["Sapi", "Ayam", "Burung", "Ikan"], j:0 }
+                ];
+            } else if (t === 'sd') {
+                if (k <= '3') {
+                    return [
+                        { q: "Bagian tumbuhan yang berfotosintesis?", p: ["Daun", "Akar", "Batang", "Bunga"], j:0 },
+                        { q: "Hewan pemakan daging disebut?", p: ["Karnivor", "Herbivor", "Omnivor", "Insektivor"], j:0 },
+                        { q: "Gas yang diperlukan saat bernapas?", p: ["Oksigen", "Karbon dioksida", "Nitrogen", "Hidrogen"], j:0 },
+                        { q: "Planet terdekat matahari?", p: ["Merkurius", "Venus", "Bumi", "Mars"], j:0 },
+                        { q: "Akarnya untuk menyerap?", p: ["Air dan mineral", "Oksigen", "Karbon dioksida", "Cahaya"], j:0 },
+                        { q: "Hewan yang berkembang biak dengan bertelur?", p: ["Ayam", "Kucing", "Sapi", "Kambing"], j:0 },
+                        { q: "Bumi berputar pada?", p: ["Sumbunya", "Matahari", "Bulan", "Bintang"], j:0 },
+                        { q: "Benda cair contohnya?", p: ["Air", "Batu", "Kayu", "Besi"], j:0 },
+                        { q: "Fungsi gigi taring?", p: ["Mengoyak", "Mengunyah", "Memotong", "Menghaluskan"], j:0 },
+                        { q: "Hewan yang mengalami metamorfosis?", p: ["Kupu-kupu", "Ayam", "Sapi", "Kambing"], j:0 }
+                    ];
+                } else {
+                    return [
+                        { q: "Sumber energi terbesar di bumi?", p: ["Matahari", "Angin", "Air", "Batu bara"], j:0 },
+                        { q: "Proses berubahnya air menjadi uap?", p: ["Evaporasi", "Kondensasi", "Presipitasi", "Sublimasi"], j:0 },
+                        { q: "Alat ukur suhu?", p: ["Termometer", "Barometer", "Hygrometer", "Anemometer"], j:0 },
+                        { q: "Rantai makanan dimulai dari?", p: ["Tumbuhan", "Herbivor", "Karnivor", "Pengurai"], j:0 },
+                        { q: "Planet terbesar di tata surya?", p: ["Jupiter", "Saturnus", "Bumi", "Neptunus"], j:0 },
+                        { q: "Fungsi paru-paru?", p: ["Bernapas", "Mencerna", "Memompa darah", "Menyaring racun"], j:0 },
+                        { q: "Gaya yang menyebabkan benda jatuh?", p: ["Gravitasi", "Gesek", "Listrik", "Magnet"], j:0 },
+                        { q: "Satuan berat?", p: ["Kg", "Meter", "Liter", "Detik"], j:0 },
+                        { q: "Hewan yang hidup di dua alam?", p: ["Katak", "Ikan", "Burung", "Ular"], j:0 },
+                        { q: "Benda yang dapat menghantarkan listrik?", p: ["Tembaga", "Plastik", "Kayu", "Karet"], j:0 }
+                    ];
+                }
+            } else if (t === 'smp') {
+                return [
+                    { q: "Zat yang diperlukan dalam fotosintesis?", p: ["CO2 & air", "O2 & glukosa", "Nitrogen", "Tanah"], j:0 },
+                    { q: "Bagian sel yang mengontrol aktivitas sel?", p: ["Inti sel", "Mitokondria", "Ribosom", "Membran"], j:0 },
+                    { q: "Gaya yang menarik benda ke pusat bumi?", p: ["Gravitasi", "Gesek", "Listrik", "Magnet"], j:0 },
+                    { q: "Satuan kuat arus listrik?", p: ["Ampere", "Volt", "Watt", "Ohm"], j:0 },
+                    { q: "Enzim pencernaan di lambung?", p: ["Pepsin", "Amilase", "Lipase", "Tripsin"], j:0 },
+                    { q: "Golongan darah paling universal donor?", p: ["O", "A", "B", "AB"], j:0 },
+                    { q: "Proses penyesuaian makhluk hidup terhadap lingkungan?", p: ["Adaptasi", "Seleksi alam", "Evolusi", "Mutasi"], j:0 },
+                    { q: "Planet dengan cincin indah?", p: ["Saturnus", "Jupiter", "Uranus", "Neptunus"], j:0 },
+                    { q: "Lapisan ozon terdapat di?", p: ["Stratosfer", "Troposfer", "Mesosfer", "Termosfer"], j:0 },
+                    { q: "Penyakit akibat kekurangan vitamin C?", p: ["Sariawan", "Rabun senja", "Osteoporosis", "Anemia"], j:0 }
+                ];
+            } else { // sma
+                return [
+                    { q: "Reaksi kimia yang menghasilkan energi disebut?", p: ["Eksoterm", "Endoterm", "Sintesis", "Analisis"], j:0 },
+                    { q: "Hormon yang mengatur gula darah?", p: ["Insulin", "Adrenalin", "Estrogen", "Testosteron"], j:0 },
+                    { q: "Fotosintesis menghasilkan?", p: ["Glukosa & O2", "CO2 & air", "Protein", "Lemak"], j:0 },
+                    { q: "Partikel subatom bermuatan negatif?", p: ["Elektron", "Proton", "Neutron", "Positron"], j:0 },
+                    { q: "Nama lain dari vitamin B1?", p: ["Tiamin", "Riboflavin", "Niasin", "Piridoksin"], j:0 },
+                    { q: "Organ yang memompa darah?", p: ["Jantung", "Paru-paru", "Hati", "Ginjal"], j:0 },
+                    { q: "Cacing tanah bernapas melalui?", p: ["Kulit", "Paru-paru", "Insang", "Trakea"], j:0 },
+                    { q: "Fungsi mitokondria?", p: ["Respirasi sel", "Sintesis protein", "Pencernaan", "Ekskresi"], j:0 },
+                    { q: "Hukum kekekalan energi dikemukakan?", p: ["Joule", "Newton", "Einstein", "Archimedes"], j:0 },
+                    { q: "Reaksi terang fotosintesis menghasilkan?", p: ["ATP & O2", "Glukosa", "CO2", "Air"], j:0 }
+                ];
+            }
+        }
+
+        // ============ SENI RUPA ============
+        else if (m === 'seni') {
+            if (t === 'tk') {
+                return [
+                    { q: "Warna dasar?", p: ["Merah, biru, kuning", "Hijau, ungu, oranye", "Hitam, putih", "Coklat, abu"], j:0 },
+                    { q: "Alat mewarnai?", p: ["Krayon", "Pensil", "Penggaris", "Gunting"], j:0 },
+                    { q: "Bentuk lingkaran seperti?", p: ["Bola", "Kotak", "Segitiga", "Tabung"], j:0 },
+                    { q: "Warna hijau campuran?", p: ["Biru & kuning", "Merah & kuning", "Merah & biru", "Hitam & putih"], j:0 },
+                    { q: "Alat untuk menggambar?", p: ["Pensil", "Penghapus", "Penggaris", "Semua benar"], j:3 },
+                    { q: "Hasil karya seni rupa 2 dimensi?", p: ["Lukisan", "Patung", "Guci", "Meja"], j:0 },
+                    { q: "Warna oranye campuran?", p: ["Merah & kuning", "Biru & kuning", "Merah & biru", "Hitam & putih"], j:0 },
+                    { q: "Kuas digunakan untuk?", p: ["Melukis", "Menulis", "Memotong", "Mengukur"], j:0 },
+                    { q: "Bahan untuk membuat patung?", p: ["Tanah liat", "Kertas", "Plastik", "Kayu"], j:0 },
+                    { q: "Warna ungu campuran?", p: ["Merah & biru", "Merah & kuning", "Biru & kuning", "Hitam & putih"], j:0 }
+                ];
+            } else if (t === 'sd') {
+                return [
+                    { q: "Alat untuk melukis biasanya?", p: ["Kuas", "Pensil", "Penggaris", "Gunting"], j:0 },
+                    { q: "Cat berbahan air?", p: ["Cat air", "Cat minyak", "Cat akrilik", "Cat kayu"], j:0 },
+                    { q: "Seni rupa 2 dimensi contoh?", p: ["Lukisan", "Patung", "Keramik", "Bangunan"], j:0 },
+                    { q: "Seni rupa 3 dimensi contoh?", p: ["Patung", "Lukisan", "Foto", "Gambar"], j:0 },
+                    { q: "Warna sekunder?", p: ["Hijau, ungu, oranye", "Merah, biru, kuning", "Hitam, putih", "Coklat, abu"], j:0 },
+                    { q: "Teknik menggambar dengan titik-titik?", p: ["Pointilis", "Aquarel", "Plakat", "Arsir"], j:0 },
+                    { q: "Lukisan manusia terkenal?", p: ["Mona Lisa", "The Scream", "Starry Night", "The Persistence"], j:0 },
+                    { q: "Palet digunakan untuk?", p: ["Tempat cat", "Tempat kuas", "Mengaduk cat", "Membersihkan kuas"], j:0 },
+                    { q: "Contoh seni kriya?", p: ["Anyaman", "Lukisan", "Gambar", "Patung"], j:0 },
+                    { q: "Cat minyak menggunakan pelarut?", p: ["Terpentin", "Air", "Minyak", "Lem"], j:0 }
+                ];
+            } else if (t === 'smp') {
+                return [
+                    { q: "Lukisan 'Mona Lisa' dibuat oleh?", p: ["Leonardo da Vinci", "Van Gogh", "Picasso", "Rembrandt"], j:0 },
+                    { q: "Aliran seni yang menggambarkan kenyataan?", p: ["Realisme", "Surealisme", "Kubisme", "Abstrak"], j:0 },
+                    { q: "Pelukis terkenal Indonesia?", p: ["Affandi", "Basuki Abdullah", "Radin Saleh", "Semua benar"], j:3 },
+                    { q: "Lukisan 'The Scream' karya?", p: ["Edvard Munch", "Van Gogh", "Picasso", "Monet"], j:0 },
+                    { q: "Aliran kubisme dipelopori?", p: ["Picasso", "Dali", "Matisse", "Kandinsky"], j:0 },
+                    { q: "Seni lukis aliran abstrak?", p: ["Tidak berbentuk nyata", "Realistis", "Alam", "Manusia"], j:0 },
+                    { q: "Teknik melukis dengan cat tebal?", p: ["Plakat", "Aquarel", "Spray", "Tempera"], j:0 },
+                    { q: "Fungsi seni rupa terapan?", p: ["Memiliki nilai guna", "Hiasan", "Ekspresi", "Koleksi"], j:0 },
+                    { q: "Gambar karikatur bersifat?", p: ["Kritik/ humor", "Keindahan", "Realistis", "Abstrak"], j:0 },
+                    { q: "Proses mencetak disebut?", p: ["Seni grafis", "Seni lukis", "Seni patung", "Seni kriya"], j:0 }
+                ];
+            } else { // sma
+                return [
+                    { q: "Pelukis Indonesia beraliran naturalis?", p: ["Basuki Abdullah", "Affandi", "Radin Saleh", "Sudjojono"], j:0 },
+                    { q: "Seni rupa murni lebih menekankan?", p: ["Keindahan", "Fungsi", "Ekonomi", "Teknologi"], j:0 },
+                    { q: "Tokoh seni rupa modern Indonesia?", p: ["Affandi", "Basuki Abdullah", "Sudjojono", "Semua benar"], j:3 },
+                    { q: "Aliran surealisme terkenal dengan?", p: ["Mimpi dan imajinasi", "Bentuk geometris", "Alam nyata", "Abstrak"], j:0 },
+                    { q: "Lukisan 'The Persistence of Memory' karya?", p: ["Dali", "Picasso", "Van Gogh", "Monet"], j:0 },
+                    { q: "Seni instalasi termasuk?", p: ["Seni kontemporer", "Seni klasik", "Seni modern", "Seni tradisional"], j:0 },
+                    { q: "Estetika adalah cabang filsafat yang membahas?", p: ["Keindahan", "Kebenaran", "Kebaikan", "Keadilan"], j:0 },
+                    { q: "Warna komplementer?", p: ["Berseberangan di lingkaran warna", "Berdampingan", "Sama", "Gelap terang"], j:0 },
+                    { q: "Seni fotografi termasuk?", p: ["Seni visual", "Seni musik", "Seni tari", "Seni teater"], j:0 },
+                    { q: "Pameran seni bertujuan?", p: ["Apresiasi", "Komersial", "Edukasi", "Semua benar"], j:3 }
+                ];
+            }
+        }
+
+        // ============ PANCASILA ============
+        else if (m === 'pkn') {
+            if (t === 'tk') {
+                return [
+                    { q: "Lambang negara Indonesia?", p: ["Garuda", "Banteng", "Padi kapas", "Bintang"], j:0 },
+                    { q: "Warna bendera Indonesia?", p: ["Merah putih", "Biru putih", "Hijau kuning", "Hitam merah"], j:0 },
+                    { q: "Presiden pertama RI?", p: ["Soekarno", "Soeharto", "Habibie", "Megawati"], j:0 },
+                    { q: "Lagu kebangsaan?", p: ["Indonesia Raya", "Garuda Pancasila", "Halo-halo Bandung", "Tanah Airku"], j:0 },
+                    { q: "Pahlawan yang ada di uang Rp1000?", p: ["Cut Nyak Dien", "Pattimura", "Diponegoro", "Kartini"], j:0 },
+                    { q: "Hari kemerdekaan RI?", p: ["17 Agustus", "10 November", "1 Juni", "21 April"], j:0 },
+                    { q: "Dasar negara Indonesia?", p: ["Pancasila", "UUD", "Bhineka", "NKRI"], j:0 },
+                    { q: "Bhinneka Tunggal Ika artinya?", p: ["Berbeda-beda tetap satu", "Satu untuk semua", "Bersatu kita teguh", "Merdeka"], j:0 },
+                    { q: "Ibukota Indonesia?", p: ["Jakarta", "Surabaya", "Bandung", "Medan"], j:0 },
+                    { q: "Pulau tempat kelahiran Soekarno?", p: ["Jawa", "Sumatra", "Sulawesi", "Bali"], j:0 }
+                ];
+            } else if (t === 'sd') {
+                return [
+                    { q: "Sila pertama Pancasila?", p: ["Ketuhanan YME", "Kemanusiaan", "Persatuan", "Kerakyatan"], j:0 },
+                    { q: "Jumlah sila Pancasila?", p: ["5", "4", "6", "3"], j:0 },
+                    { q: "Presiden pertama RI?", p: ["Soekarno", "Soeharto", "Habibie", "Megawati"], j:0 },
+                    { q: "Lambang sila ke-2?", p: ["Rantai", "Bintang", "Pohon beringin", "Kepala banteng"], j:0 },
+                    { q: "Bunyi sila ke-3?", p: ["Persatuan Indonesia", "Kemanusiaan", "Kerakyatan", "Keadilan"], j:0 },
+                    { q: "Warna dasar pada lambang Garuda?", p: ["Kuning", "Merah", "Putih", "Hitam"], j:0 },
+                    { q: "Tanggal lahir Pancasila?", p: ["1 Juni", "17 Agustus", "18 Agustus", "10 November"], j:0 },
+                    { q: "Tokoh perumus Pancasila?", p: ["Soekarno", "Hatta", "Sjahrir", "Tan Malaka"], j:0 },
+                    { q: "Sila ke-4 dilambangkan dengan?", p: ["Kepala banteng", "Bintang", "Rantai", "Padi kapas"], j:0 },
+                    { q: "Sila ke-5 dilambangkan?", p: ["Padi kapas", "Bintang", "Rantai", "Pohon beringin"], j:0 }
+                ];
+            } else if (t === 'smp') {
+                return [
+                    { q: "Upacara bendera setiap hari?", p: ["Senin", "Selasa", "Jumat", "Sabtu"], j:0 },
+                    { q: "Dasar negara Indonesia?", p: ["Pancasila", "UUD 1945", "Bhinneka", "NKRI"], j:0 },
+                    { q: "BPUPKI dibentuk tahun?", p: ["1945", "1944", "1943", "1942"], j:0 },
+                    { q: "Sidang pertama BPUPKI membahas?", p: ["Dasar negara", "UUD", "Bendera", "Presiden"], j:0 },
+                    { q: "Piagam Jakarta disusun oleh?", p: ["Panitia Sembilan", "BPUPKI", "PPKI", "KNIP"], j:0 },
+                    { q: "Teks proklamasi diketik oleh?", p: ["Sayuti Melik", "Soekarno", "Hatta", "Ahmad Soebardjo"], j:0 },
+                    { q: "Wakil presiden pertama?", p: ["Hatta", "Soekarno", "Sjahrir", "Tan Malaka"], j:0 },
+                    { q: "Lembaga yang berwenang mengubah UUD?", p: ["MPR", "DPR", "MA", "MK"], j:0 },
+                    { q: "Hak asasi manusia diatur dalam?", p: ["UUD 1945", "KUHP", "KUHAP", "Perpu"], j:0 },
+                    { q: "Pemilihan presiden secara langsung sejak?", p: ["2004", "1999", "2009", "2014"], j:0 }
+                ];
+            } else { // sma
+                return [
+                    { q: "BPUPKI dibentuk tahun?", p: ["1945", "1944", "1943", "1942"], j:0 },
+                    { q: "Amandemen UUD 1945 dilakukan?", p: ["4 kali", "3 kali", "5 kali", "2 kali"], j:0 },
+                    { q: "Sistem pemerintahan Indonesia?", p: ["Presidensial", "Parlementer", "Semi-presidensial", "Monarki"], j:0 },
+                    { q: "Lembaga yudikatif tertinggi?", p: ["MA", "MK", "KY", "DPR"], j:0 },
+                    { q: "Dewan Perwakilan Daerah termasuk?", p: ["MPR", "DPR", "Presiden", "MA"], j:0 },
+                    { q: "Pasal yang mengatur HAM?", p: ["28A-28J", "27", "29", "30"], j:0 },
+                    { q: "Presiden ke-4 RI?", p: ["Abdurrahman Wahid", "Megawati", "Soeharto", "Habibie"], j:0 },
+                    { q: "Pembagian kekuasaan menurut Montesquieu?", p: ["Trias politica", "Dualisme", "Sentralisasi", "Desentralisasi"], j:0 },
+                    { q: "Otonomi daerah diatur dalam UU No?", p: ["32/2004", "22/1999", "12/2008", "23/2014"], j:0 },
+                    { q: "Mahkamah Konstitusi dibentuk tahun?", p: ["2003", "2001", "2004", "2005"], j:0 }
+                ];
+            }
+        }
+
+        // ============ BAHASA INDONESIA ============
+        else if (m === 'bindo') {
+            if (t === 'tk') {
+                return [
+                    { q: "Hewan yang mengeong?", p: ["Kucing", "Anjing", "Kambing", "Sapi"], j:0 },
+                    { q: "Ayah perempuan disebut?", p: ["Ibu", "Nenek", "Bibi", "Kakak"], j:0 },
+                    { q: "Lawan kata 'besar'?", p: ["Kecil", "Tinggi", "Lebar", "Panjang"], j:0 },
+                    { q: "Kata 'aku' untuk diri sendiri?", p: ["Saya", "Kamu", "Dia", "Mereka"], j:0 },
+                    { q: "Hewan yang berkokok?", p: ["Ayam", "Bebek", "Burung", "Kucing"], j:0 },
+                    { q: "Buah yang rasanya manis?", p: ["Apel", "Jeruk", "Pisang", "Semua benar"], j:3 },
+                    { q: "Kendaraan yang terbang?", p: ["Pesawat", "Mobil", "Kereta", "Kapal"], j:0 },
+                    { q: "Anggota tubuh untuk mencium?", p: ["Hidung", "Mata", "Telinga", "Mulut"], j:0 },
+                    { q: "Minuman yang sehat?", p: ["Air putih", "Soda", "Kopi", "Teh"], j:0 },
+                    { q: "Kata sapaan untuk guru?", p: ["Pak/Bu", "Mas/Mbak", "Kakak", "Adik"], j:0 }
+                ];
+            } else if (t === 'sd') {
+                if (k <= '2') {
+                    return [
+                        { q: "Sinonim kata 'besar'?", p: ["Raksasa", "Kecil", "Tinggi", "Lebar"], j:0 },
+                        { q: "Lawan kata 'panas'?", p: ["Dingin", "Hangat", "Sejuk", "Adem"], j:0 },
+                        { q: "Kata tanya untuk menanyakan orang?", p: ["Siapa", "Apa", "Di mana", "Kapan"], j:0 },
+                        { q: "Akhiran '-kan' disebut?", p: ["Imbuhan", "Kata dasar", "Partikel", "Klausa"], j:0 },
+                        { q: "Kata depan yang tepat: ... rumah", p: ["di", "ke", "dari", "pada"], j:0 },
+                        { q: "Huruf vokal?", p: ["a,i,u,e,o", "b,c,d", "k,l,m", "p,q,r"], j:0 },
+                        { q: "Contoh kata benda?", p: ["Meja", "Lari", "Cantik", "Dengan"], j:0 },
+                        { q: "Contoh kata sifat?", p: ["Cantik", "Buku", "Makan", "Dan"], j:0 },
+                        { q: "Kalimat perintah biasanya diakhiri?", p: ["!", ".", "?", ";" ], j:0 },
+                        { q: "Kata ulang 'sayur-mayur' bermakna?", p: ["Bermacam-macam", "Banyak", "Sama", "Berulang"], j:0 }
+                    ];
+                } else {
+                    return [
+                        { q: "Kata tanya untuk menanyakan tempat?", p: ["Di mana", "Apa", "Siapa", "Kapan"], j:0 },
+                        { q: "Akhiran '-kan' disebut?", p: ["Imbuhan", "Kata dasar", "Partikel", "Klausa"], j:0 },
+                        { q: "Sinomin kata 'gembira'?", p: ["Senang", "Sedih", "Marah", "Takut"], j:0 },
+                        { q: "Antonim kata 'rajin'?", p: ["Malas", "Pintar", "Cepat", "Suka"], j:0 },
+                        { q: "Puisi lama yang bersajak a-b-a-b?", p: ["Pantun", "Syair", "Gurindam", "Hikayat"], j:0 },
+                        { q: "Tokoh dalam 'Laskar Pelangi'?", p: ["Ikal", "Budi", "Ahmad", "Siti"], j:0 },
+                        { q: "Kata baku dari 'ijin'?", p: ["izin", "ijin", "idzin", "isim"], j:0 },
+                        { q: "Kalimat aktif transitif?", p: ["Adik makan nasi", "Ibu memasak", "Ayah tidur", "Kakak berlari"], j:0 },
+                        { q: "Cerita fiksi biasanya?", p: ["Rekayasa", "Nyata", "Sejarah", "Biografi"], j:0 },
+                        { q: "Laporan pengamatan termasuk?", p: ["Nonfiksi", "Fiksi", "Legenda", "Dongeng"], j:0 }
+                    ];
+                }
+            } else if (t === 'smp') {
+                return [
+                    { q: "Puisi lama bersajak a-b-a-b?", p: ["Pantun", "Syair", "Gurindam", "Hikayat"], j:0 },
+                    { q: "Cerita rakyat yang tidak diketahui pengarang?", p: ["Fabel", "Legenda", "Mite", "Sage"], j:0 },
+                    { q: "Kata 'di' sebagai kata depan yang benar?", p: ["di rumah", "dirumah", "di-rumah", "di rumah saja"], j:0 },
+                    { q: "Novel 'Laskar Pelangi' karya?", p: ["Andrea Hirata", "Pramoedya", "Tere Liye", "Dee Lestari"], j:0 },
+                    { q: "Majas perbandingan yang menggunakan kata 'seperti'?", p: ["Asosiasi", "Personifikasi", "Metafora", "Hiperbola"], j:0 },
+                    { q: "Kata serapan dari bahasa Arab?", p: ["Alam", "Buku", "Kursi", "Meja"], j:0 },
+                    { q: "Struktur teks prosedur?", p: ["Tujuan, langkah", "Orientasi, krisis", "Abstraksi, orientasi", "Pernyataan, argumen"], j:0 },
+                    { q: "Frasa 'sedang makan' termasuk?", p: ["Verba", "Nomina", "Adjektiva", "Adverbia"], j:0 },
+                    { q: "Kalimat kompleks adalah?", p: ["Memiliki lebih dari satu klausa", "Satu klausa", "Tanpa predikat", "Hanya subjek"], j:0 },
+                    { q: "Contoh kata kerja mental?", p: ["Memikirkan", "Membaca", "Menulis", "Berlari"], j:0 }
+                ];
+            } else { // sma
+                return [
+                    { q: "Tokoh dalam 'Laskar Pelangi'?", p: ["Ikal", "Budi", "Ahmad", "Siti"], j:0 },
+                    { q: "Karya sastra berbentuk prosa panjang?", p: ["Novel", "Cerpen", "Puisi", "Drama"], j:0 },
+                    { q: "Angkatan sastra 'Balai Pustaka' dikenal dengan?", p: ["Sastra Melayu", "Sastra Jawa", "Sastra Sunda", "Sastra Modern"], j:0 },
+                    { q: "Puisi karya Chairil Anwar yang terkenal?", p: ["Aku", "Doa", "Sajak Putih", "Semua benar"], j:3 },
+                    { q: "Cerpen termasuk?", p: ["Prosa", "Puisi", "Drama", "Esai"], j:0 },
+                    { q: "Sinopsis adalah?", p: ["Ringkasan cerita", "Kritik", "Resensi", "Biografi"], j:0 },
+                    { q: "Resensi buku berisi?", p: ["Penilaian buku", "Ringkasan", "Biografi penulis", "Semua benar"], j:0 },
+                    { q: "Majalah sastra 'Horison' terbit tahun?", p: ["1966", "1950", "1970", "1980"], j:0 },
+                    { q: "Tokoh sastra Pramoedya Ananta Toer menulis?", p: ["Bumi Manusia", "Laskar Pelangi", "Siti Nurbaya", "Atheis"], j:0 },
+                    { q: "Unsur intrinsik cerita?", p: ["Tema, tokoh, alur", "Latar belakang penulis", "Nilai sosial", "Biografi"], j:0 }
+                ];
+            }
+        }
+
+        // ============ BAHASA INGGRIS ============
+        else if (m === 'binggris') {
+            if (t === 'tk') {
+                return [
+                    { q: "Bahasa Inggris 'kucing'?", p: ["Cat", "Dog", "Bird", "Fish"], j:0 },
+                    { q: "Bahasa Inggris 'ibu'?", p: ["Mother", "Father", "Sister", "Brother"], j:0 },
+                    { q: "Bahasa Inggris 'merah'?", p: ["Red", "Blue", "Green", "Yellow"], j:0 },
+                    { q: "Bahasa Inggris 'satu'?", p: ["One", "Two", "Three", "Four"], j:0 },
+                    { q: "Bahasa Inggris 'buku'?", p: ["Book", "Pen", "Pencil", "Ruler"], j:0 },
+                    { q: "Bahasa Inggris 'pagi'?", p: ["Morning", "Night", "Afternoon", "Evening"], j:0 },
+                    { q: "Bahasa Inggris 'selamat tinggal'?", p: ["Goodbye", "Hello", "Hi", "Thanks"], j:0 },
+                    { q: "Bahasa Inggris 'anjing'?", p: ["Dog", "Cat", "Bird", "Fish"], j:0 },
+                    { q: "Bahasa Inggris 'rumah'?", p: ["House", "Car", "Tree", "Flower"], j:0 },
+                    { q: "Bahasa Inggris 'matahari'?", p: ["Sun", "Moon", "Star", "Cloud"], j:0 }
+                ];
+            } else if (t === 'sd') {
+                if (k <= '3') {
+                    return [
+                        { q: "I ... a student.", p: ["am", "is", "are", "be"], j:0 },
+                        { q: "Colour of apple?", p: ["Red", "Blue", "Green", "Yellow"], j:0 },
+                        { q: "How are you? Fine, ... you.", p: ["thank", "thanks", "thank you", "please"], j:0 },
+                        { q: "My name ... Andi.", p: ["is", "am", "are", "be"], j:0 },
+                        { q: "Good morning, ...?", p: ["How are you?", "What your name?", "Where you?", "Hello"], j:0 },
+                        { q: "The opposite of 'big'?", p: ["Small", "Tall", "Short", "Long"], j:0 },
+                        { q: "We ... in the classroom.", p: ["are", "is", "am", "be"], j:0 },
+                        { q: "This ... a book.", p: ["is", "am", "are", "be"], j:0 },
+                        { q: "She ... to school every day.", p: ["goes", "go", "went", "going"], j:0 },
+                        { q: "They ... playing football.", p: ["are", "is", "am", "be"], j:0 }
+                    ];
+                } else {
+                    return [
+                        { q: "Good morning, ...?", p: ["How are you?", "What your name?", "Where you?", "Hello"], j:0 },
+                        { q: "The opposite of 'big'?", p: ["Small", "Tall", "Short", "Long"], j:0 },
+                        { q: "She ... to school every day.", p: ["goes", "go", "went", "going"], j:0 },
+                        { q: "I ... a glass of milk yesterday.", p: ["drank", "drink", "drunk", "drinks"], j:0 },
+                        { q: "They are ... TV now.", p: ["watching", "watch", "watched", "watches"], j:0 },
+                        { q: "My father ... a car.", p: ["has", "have", "is", "are"], j:0 },
+                        { q: "We ... go to the zoo last week.", p: ["didn't", "don't", "doesn't", "aren't"], j:0 },
+                        { q: "What is the time? It's ... o'clock.", p: ["seven", "seven", "seven", "seven"], j:0 },
+                        { q: "Where is the cat? It is ... the table.", p: ["under", "in", "on", "at"], j:0 },
+                        { q: "I like ... apple.", p: ["an", "a", "the", "-"], j:0 }
+                    ];
+                }
+            } else if (t === 'smp') {
+                return [
+                    { q: "Past tense of 'go'?", p: ["Went", "Gone", "Goes", "Going"], j:0 },
+                    { q: "She ... to school every day.", p: ["goes", "go", "went", "going"], j:0 },
+                    { q: "I ... a letter yesterday.", p: ["wrote", "write", "written", "writes"], j:0 },
+                    { q: "They are ... in the river.", p: ["swimming", "swim", "swam", "swum"], j:0 },
+                    { q: "He ... not like coffee.", p: ["does", "do", "is", "are"], j:0 },
+                    { q: "We ... to the cinema tonight.", p: ["will go", "go", "went", "going"], j:0 },
+                    { q: "If I ... you, I would study.", p: ["were", "was", "am", "is"], j:0 },
+                    { q: "The book ... by John.", p: ["was written", "wrote", "written", "is written"], j:0 },
+                    { q: "She has ... to London.", p: ["been", "gone", "went", "go"], j:0 },
+                    { q: "I ... here since 2010.", p: ["have lived", "live", "lived", "am living"], j:0 }
+                ];
+            } else { // sma
+                return [
+                    { q: "Synonym of 'happy'?", p: ["Joyful", "Sad", "Angry", "Tired"], j:0 },
+                    { q: "Which is a conjunction?", p: ["because", "run", "beautiful", "quickly"], j:0 },
+                    { q: "If I ... you, I would apologize.", p: ["were", "was", "am", "is"], j:0 },
+                    { q: "She asked where I ...", p: ["lived", "live", "living", "to live"], j:0 },
+                    { q: "The car needs ...", p: ["washing", "to wash", "wash", "washed"], j:0 },
+                    { q: "I wish I ... taller.", p: ["were", "was", "am", "is"], j:0 },
+                    { q: "He's used to ... up early.", p: ["getting", "get", "got", "gets"], j:0 },
+                    { q: "This time next week, we ... on holiday.", p: ["will be", "are", "will have", "will"], j:0 },
+                    { q: "The movie was ... than I expected.", p: ["better", "good", "best", "more good"], j:0 },
+                    { q: "She speaks English ...", p: ["fluently", "fluent", "good", "well"], j:0 }
+                ];
+            }
+        }
+
+        // ============ SEJARAH ============
+        else if (m === 'sejarah') {
+            if (t === 'tk') {
+                return [
+                    { q: "Proklamasi kemerdekaan RI tahun?", p: ["1945", "1946", "1944", "1947"], j:0 },
+                    { q: "Pahlawan dari Surabaya?", p: ["Bung Tomo", "Diponegoro", "Kartini", "Sudirman"], j:0 },
+                    { q: "Presiden pertama RI?", p: ["Soekarno", "Soeharto", "Habibie", "Megawati"], j:0 },
+                    { q: "Bendera kita disebut?", p: ["Sang Merah Putih", "Garuda", "Bhinneka", "NKRI"], j:0 },
+                    { q: "Hari Pahlawan 10 November untuk memperingati?", p: ["Pertempuran Surabaya", "Proklamasi", "Sumpah Pemuda", "Kemerdekaan"], j:0 },
+                    { q: "Lagu 'Indonesia Raya' diciptakan oleh?", p: ["Wage Rudolf Supratman", "C. Simanjuntak", "Ismail Marzuki", "Kusbini"], j:0 },
+                    { q: "Pembacaan teks proklamasi di?", p: ["Jakarta", "Bandung", "Surabaya", "Yogyakarta"], j:0 },
+                    { q: "Penculikan Soekarno-Hatta ke Rengasdengklok terjadi sebelum?", p: ["Proklamasi", "Sumpah Pemuda", "Hari Pahlawan", "Kemerdekaan"], j:0 },
+                    { q: "BPUPKI diketuai oleh?", p: ["Dr. KRT Radjiman Wedyodiningrat", "Soekarno", "Hatta", "Supomo"], j:0 },
+                    { q: "PPKI diketuai oleh?", p: ["Soekarno", "Hatta", "Radjiman", "Sjahrir"], j:0 }
+                ];
+            } else if (t === 'sd') {
+                if (k <= '3') {
+                    return [
+                        { q: "Nama presiden pertama?", p: ["Soekarno", "Soeharto", "Habibie", "Gus Dur"], j:0 },
+                        { q: "Bendera kita disebut?", p: ["Sang Merah Putih", "Garuda", "Bhinneka", "NKRI"], j:0 },
+                        { q: "Lambang negara kita?", p: ["Garuda Pancasila", "Banteng", "Padi kapas", "Bintang"], j:0 },
+                        { q: "Hari Kemerdekaan 17 Agustus tahun?", p: ["1945", "1946", "1944", "1947"], j:0 },
+                        { q: "Pahlawan perempuan dari Aceh?", p: ["Cut Nyak Dien", "Kartini", "Dewi Sartika", "Martha Tiahahu"], j:0 },
+                        { q: "Sumpah Pemuda diperingati setiap?", p: ["28 Oktober", "20 Mei", "1 Juni", "10 November"], j:0 },
+                        { q: "Wakil presiden pertama?", p: ["Hatta", "Soekarno", "Sudirman", "Sjahrir"], j:0 },
+                        { q: "Jepang menyerah kepada Sekutu bulan?", p: ["Agustus 1945", "September 1945", "Oktober 1945", "Juli 1945"], j:0 },
+                        { q: "Dokuritsu Junbi Cosakai adalah nama lain?", p: ["BPUPKI", "PPKI", "KNIP", "TNI"], j:0 },
+                        { q: "Tokoh yang mengetik teks proklamasi?", p: ["Sayuti Melik", "Ahmad Soebardjo", "Sukarni", "Latief"], j:0 }
+                    ];
+                } else {
+                    return [
+                        { q: "Kerajaan Hindu tertua di Indonesia?", p: ["Kutai", "Sriwijaya", "Majapahit", "Mataram"], j:0 },
+                        { q: "Penculikan Soekarno-Hatta ke Rengasdengklok terjadi sebelum?", p: ["Proklamasi", "Sumpah Pemuda", "Hari Pahlawan", "Kemerdekaan"], j:0 },
+                        { q: "Candi Borobudur adalah peninggalan?", p: ["Budha", "Hindu", "Islam", "Kristen"], j:0 },
+                        { q: "Kerajaan Sriwijaya terkenal sebagai?", p: ["Kerajaan maritim", "Kerajaan agraris", "Kerajaan Islam", "Kerajaan kecil"], j:0 },
+                        { q: "Pattimura adalah pahlawan dari?", p: ["Maluku", "Papua", "Sulawesi", "Kalimantan"], j:0 },
+                        { q: "Perang Diponegoro terjadi tahun?", p: ["1825-1830", "1815-1820", "1835-1840", "1845-1850"], j:0 },
+                        { q: "Organisasi Budi Utomo berdiri tahun?", p: ["1908", "1912", "1928", "1945"], j:0 },
+                        { q: "Sarekat Islam dipimpin oleh?", p: ["HOS Tjokroaminoto", "Agus Salim", "Semaun", "Tan Malaka"], j:0 },
+                        { q: "Lahirnya Sumpah Pemuda tahun?", p: ["1928", "1908", "1945", "1918"], j:0 },
+                        { q: "BPUPKI dibentuk oleh pemerintah?", p: ["Jepang", "Belanda", "Inggris", "Sekutu"], j:0 }
+                    ];
+                }
+            } else if (t === 'smp') {
+                return [
+                    { q: "Perang Diponegoro terjadi tahun?", p: ["1825-1830", "1815-1820", "1835-1840", "1845-1850"], j:0 },
+                    { q: "Organisasi Budi Utomo berdiri tahun?", p: ["1908", "1912", "1928", "1945"], j:0 },
+                    { q: "Latar belakang Reformasi 1998?", p: ["Krisis moneter", "G30S", "Dekrit presiden", "Pemberontakan"], j:0 },
+                    { q: "Tri Koro Dharmo adalah cikal bakal?", p: ["Jong Java", "Budi Utomo", "Muhammadiyah", "NU"], j:0 },
+                    { q: "Pemberontakan PKI Madiun tahun?", p: ["1948", "1965", "1926", "1950"], j:0 },
+                    { q: "Konsep Dwifungsi ABRI dicetuskan masa?", p: ["Orde Baru", "Orde Lama", "Reformasi", "Demokrasi Liberal"], j:0 },
+                    { q: "Supersemar 11 Maret 1966 memberikan mandat kepada?", p: ["Soeharto", "Soekarno", "Nasution", "Hamengkubuwono"], j:0 },
+                    { q: "Indonesia keluar dari PBB pada masa?", p: ["Orde Lama", "Orde Baru", "Reformasi", "Sekarang"], j:0 },
+                    { q: "Peristiwa G30S/PKI terjadi tahun?", p: ["1965", "1948", "1950", "1966"], j:0 },
+                    { q: "Rengasdengklok terjadi pada tanggal?", p: ["16 Agustus 1945", "17 Agustus 1945", "15 Agustus 1945", "14 Agustus 1945"], j:0 }
+                ];
+            } else { // sma
+                return [
+                    { q: "Latar belakang Reformasi 1998?", p: ["Krisis moneter", "G30S", "Dekrit presiden", "Pemberontakan"], j:0 },
+                    { q: "Tri Koro Dharmo adalah cikal bakal?", p: ["Jong Java", "Budi Utomo", "Muhammadiyah", "NU"], j:0 },
+                    { q: "Perjanjian Linggarjati terjadi tahun?", p: ["1947", "1946", "1948", "1949"], j:0 },
+                    { q: "Agresi Militer Belanda I terjadi tahun?", p: ["1947", "1948", "1946", "1949"], j:0 },
+                    { q: "Konferensi Meja Bundar (KMB) menghasilkan?", p: ["Pengakuan kedaulatan", "Gencatan senjata", "Pembentukan RIS", "Semua benar"], j:3 },
+                    { q: "Dekrit Presiden 5 Juli 1959 memberlakukan kembali?", p: ["UUD 1945", "UUD RIS", "UUDS 1950", "Konstitusi"], j:0 },
+                    { q: "Orde Baru berkuasa sejak tahun?", p: ["1966", "1965", "1967", "1968"], j:0 },
+                    { q: "Peristiwa Malari terjadi tahun?", p: ["1974", "1970", "1980", "1966"], j:0 },
+                    { q: "Petisi 50 muncul pada masa?", p: ["Orde Baru", "Orde Lama", "Reformasi", "Demokrasi Liberal"], j:0 },
+                    { q: "Referendum Timor Timur 1999 menghasilkan?", p: ["Merdeka dari Indonesia", "Tetap di Indonesia", "Otonomi khusus", "Bergabung dengan Portugal"], j:0 }
+                ];
+            }
+        }
+
+        // fallback
+        return [
+            { q: "Apa ibu kota Indonesia?", p: ["Jakarta", "Bandung", "Surabaya", "Medan"], j:0 }
+        ];
+    }
+
+    // ============ GENERATE SOAL DENGAN SHUFFLE ============
+    function generateSoal() {
+        let bank = getBankSoal();
+        // Acak urutan bank (shuffle)
+        for (let i = bank.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [bank[i], bank[j]] = [bank[j], bank[i]];
+        }
+        // Ambil 10 soal pertama (jika bank kurang dari 10, ulangi dengan random, tapi kita pastikan >=10)
+        let soal = [];
+        for (let i = 0; i < 10; i++) {
+            // Jika bank lebih dari 10, kita sudah shuffle dan ambil 10 pertama
+            // Jika bank kurang (tidak mungkin karena semua >=10), kita bisa ambil modulo, tapi kita hindari
+            soal.push({
+                pertanyaan: bank[i].q,
+                pilihan: bank[i].p,
+                jawaban: bank[i].j
+            });
+        }
+        return soal;
+    }
+
+    // ============ MULAI GAME ============
+    function mulaiGame() {
+        soalList = generateSoal();
+        jawabanUser = new Array(10).fill(null);
+        indeks = 0;
+
+        let namaMapel = {
+            matematika: 'Matematika', ips: 'IPS', ipa: 'IPA', seni: 'Seni Rupa',
+            pkn: 'Pancasila', bindo: 'B. Indonesia', binggris: 'B. Inggris', sejarah: 'Sejarah'
+        }[mapel];
+        infoMapelTingkat.innerText = `${namaMapel} - ${tingkat.toUpperCase()} Kelas ${kelas}`;
+
+        pageMapel.style.display = 'none';
+        pageTingkat.style.display = 'none';
+        pageKelas.style.display = 'none';
+        pageSoal.style.display = 'block';
+        pageHasil.style.display = 'none';
+        tampilkanSoal();
+    }
+
+    function tampilkanSoal() {
+        const s = soalList[indeks];
+        soalPertanyaan.innerText = s.pertanyaan;
+        let html = '';
+        for (let i = 0; i < 4; i++) {
+            let checked = (jawabanUser[indeks] === i) ? 'checked' : '';
+            html += `
+                <div class="pilihan-item ${checked ? 'selected' : ''}" data-index="${i}">
+                    <input type="radio" name="pilihan" value="${i}" id="opt${i}" ${checked}>
+                    <label class="pilihan-label" for="opt${i}">${s.pilihan[i]}</label>
+                </div>
+            `;
+        }
+        pilihanContainer.innerHTML = html;
+        document.querySelectorAll('.pilihan-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                let radio = this.querySelector('input');
+                radio.checked = true;
+                document.querySelectorAll('.pilihan-item').forEach(pi => pi.classList.remove('selected'));
+                this.classList.add('selected');
+                jawabanUser[indeks] = parseInt(radio.value);
+            });
+        });
+
+        soalCounter.innerText = `${indeks+1}/10`;
+        prevSoal.disabled = (indeks === 0);
+        if (indeks === 9) {
+            nextSoal.style.display = 'none';
+            submitSoal.style.display = 'inline-block';
+        } else {
+            nextSoal.style.display = 'inline-block';
+            submitSoal.style.display = 'none';
+        }
+    }
+
+    function nextSoalFn() { if (indeks < 9) { indeks++; tampilkanSoal(); } }
+    function prevSoalFn() { if (indeks > 0) { indeks--; tampilkanSoal(); } }
+
+    function hitungSkor() {
+        let benar = 0;
+        for (let i = 0; i < soalList.length; i++) {
+            if (jawabanUser[i] === soalList[i].jawaban) benar++;
+        }
+        let skor = benar * 10;
+        nilaiAkhir.innerText = skor;
+
+        let reviewHtml = '<h3>📋 Soal yang salah:</h3>';
+        let adaSalah = false;
+        for (let i = 0; i < soalList.length; i++) {
+            if (jawabanUser[i] !== soalList[i].jawaban) {
+                adaSalah = true;
+                let soal = soalList[i];
+                let jawabUser = jawabanUser[i] !== null ? soal.pilihan[jawabanUser[i]] : '(Tidak dijawab)';
+                let jawabBenar = soal.pilihan[soal.jawaban];
+                reviewHtml += `
+                    <div class="review-item">
+                        <div class="review-pertanyaan">${i+1}. ${soal.pertanyaan}</div>
+                        <div class="review-jawaban">❌ Jawabanmu: ${jawabUser}</div>
+                        <div class="review-jawaban" style="background:#cfebcf;">✅ Jawaban benar: ${jawabBenar}</div>
+                    </div>
+                `;
+            }
+        }
+        if (!adaSalah) reviewHtml += '<p style="text-align:center; font-size:1.2rem;">🎉 Selamat, semua jawaban benar!</p>';
+        reviewContainer.innerHTML = reviewHtml;
+
+        pageSoal.style.display = 'none';
+        pageHasil.style.display = 'block';
+    }
+
+    // ============ EVENT LISTENER ============
+    mapelBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            mapel = e.target.dataset.mapel;
+            pageMapel.style.display = 'none';
+            pageTingkat.style.display = 'block';
+        });
+    });
+
+    tingkatBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            tingkat = e.target.dataset.tingkat;
+            let kelasList = [];
+            if (tingkat === 'tk') kelasList = ['tk'];
+            else if (tingkat === 'sd') kelasList = ['1','2','3','4','5','6'];
+            else if (tingkat === 'smp') kelasList = ['1','2','3'];
+            else if (tingkat === 'sma') kelasList = ['1','2','3'];
+
+            let htmlKelas = '';
+            kelasList.forEach(k => {
+                let display = (k === 'tk') ? 'TK' : `Kelas ${k}`;
+                htmlKelas += `<button class="kelas-btn" data-kelas="${k}">${display}</button>`;
+            });
+            kelasButtonsDiv.innerHTML = htmlKelas;
+            kelasTitle.innerText = `Pilih Kelas (${tingkat.toUpperCase()})`;
+            pageTingkat.style.display = 'none';
+            pageKelas.style.display = 'block';
+
+            document.querySelectorAll('.kelas-btn').forEach(b => {
+                b.addEventListener('click', (ev) => {
+                    kelas = ev.target.dataset.kelas;
+                    mulaiGame();
+                });
+            });
+        });
+    });
+
+    backToMapel.addEventListener('click', () => {
+        pageMapel.style.display = 'block';
+        pageTingkat.style.display = 'none';
+        pageKelas.style.display = 'none';
+    });
+    backToTingkat.addEventListener('click', () => {
+        pageTingkat.style.display = 'block';
+        pageKelas.style.display = 'none';
+    });
+
+    prevSoal.addEventListener('click', prevSoalFn);
+    nextSoal.addEventListener('click', nextSoalFn);
+    submitSoal.addEventListener('click', hitungSkor);
+    restartBtn.addEventListener('click', () => {
+        pageMapel.style.display = 'block';
+        pageTingkat.style.display = 'none';
+        pageKelas.style.display = 'none';
+        pageSoal.style.display = 'none';
+        pageHasil.style.display = 'none';
+    });
+})();
+</script>
+</body>
+</html>
